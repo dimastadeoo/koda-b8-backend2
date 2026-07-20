@@ -43,7 +43,7 @@ func (s *UserService) Login(req *models.LoginUser) (*models.Users, error) {
 	}
 
 	if user == nil {
-		return nil, errors.New("email atau password salah")
+		return nil, errors.New("email tidak ditemukan")
 	}
 
 	err = bcrypt.CompareHashAndPassword(
@@ -52,7 +52,7 @@ func (s *UserService) Login(req *models.LoginUser) (*models.Users, error) {
 	)
 
 	if err != nil {
-		return nil, errors.New("email atau password salah")
+		return nil, errors.New("password salah")
 	}
 
 	return user, nil
