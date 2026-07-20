@@ -58,7 +58,6 @@ go mod tidy
 erDiagram
     users {
         BIGINT id PK
-        VARCHAR pin
         VARCHAR fullname
         VARCHAR email UK
         VARCHAR password
