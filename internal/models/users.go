@@ -7,8 +7,8 @@ type Users struct {
 	Fullname  string `json:"fullname"`
 	Email     string `json:"email"`
 	Password  string `json:"-"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type RegisterUsers struct {
