@@ -6,26 +6,29 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-
-type UserService struct{
+type UserService struct {
 	repo *repo.UserRepo
 }
 
-func NewServiceUser (repo *repo.UserRepo) *UserService{
+func NewServiceUser(repo *repo.UserRepo) *UserService {
 	return &UserService{repo: repo}
 }
 
-func (r *UserService) Register(user *models.RegisterUsers) (models.Users, error){
+func (r *UserService) Register(user *models.RegisterUsers) (models.Users, error) {
 	hash, err := bcrypt.GenerateFromPassword(
 		[]byte(user.Password),
 		bcrypt.DefaultCost,
-    )
+	)
 
-    if err != nil {
-        return models.Users{}, err
-    }
+	if err != nil {
+		return models.Users{}, err
+	}
 
-    user.Password = string(hash)
+	user.Password = string(hash)
 
 	return r.repo.Create(user)
+}
+
+func (s *UserService) GetAll() []models.Users {
+    return s.repo.GetAll()
 }

@@ -1,6 +1,7 @@
 package lib
-type Response struct{
-	Success bool `json:"success"`
+
+type Response struct {
+	Success bool   `json:"success"`
 	Message string `json:"message"`
-	Results any `json:"results,omitempty"`
+	Results any    `json:"results,omitempty"`
 }
