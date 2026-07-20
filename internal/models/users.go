@@ -12,12 +12,12 @@ type Users struct {
 }
 
 type RegisterUsers struct {
-	Fullname  string `json:"fullname"`
-	Email     string `json:"email"`
-	Password  string `json:"-"`
+	Fullname  string `json:"fullname" form:"fullname" binding:"required"`
+	Email     string `json:"email" form:"email" binding:"required,email"`
+	Password  string `json:"-" form:"password" binding:"required"`
 }
 
 type LoginUser struct {
-	Email     string `json:"email"`
-	Password  string `json:"-"`
+	Email     string `json:"email" form:"email" binding:"required,email"`
+	Password  string `json:"-" form:"password" binding:"required"`
 }

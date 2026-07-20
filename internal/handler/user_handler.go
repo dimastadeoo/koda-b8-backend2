@@ -8,6 +8,7 @@ import (
 	"github.com/dimastadeoo/backend1/internal/models"
 	"github.com/dimastadeoo/backend1/internal/services"
 	"github.com/gin-gonic/gin"
+	// "github.com/gin-gonic/gin/binding"
 )
 
 type UserHandler struct {
@@ -19,15 +20,25 @@ func NewHandlerUser(svc *services.UserService) *UserHandler {
 }
 
 func (h *UserHandler) Register(ctx *gin.Context) {
-	fullname := ctx.PostForm("fullname")
-	email := ctx.PostForm("email")
-	password := ctx.PostForm("password")
+	var form models.RegisterUsers
 
-	newUser, err := h.svc.Register(&models.RegisterUsers{
-		Fullname: fullname,
-		Email:    email,
-		Password: password,
-	})
+	err := ctx.ShouldBind(&form)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, lib.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	// fullname := ctx.PostForm("fullname")
+	// email := ctx.PostForm("email")
+	// password := ctx.PostForm("password")
+
+
+
+	newUser, err := h.svc.Register(&form)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, lib.Response{
