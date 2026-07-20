@@ -19,7 +19,7 @@ func NewHandlerUser(svc *services.UserService) *UserHandler {
 }
 
 func (h *UserHandler) Register(ctx *gin.Context) {
-	fullname := ctx.PostForm("name")
+	fullname := ctx.PostForm("fullname")
 	email := ctx.PostForm("email")
 	password := ctx.PostForm("password")
 
@@ -37,8 +37,18 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 	} else {
 		ctx.JSON(http.StatusOK, lib.Response{
 			Success: true,
-			Message: fmt.Sprintf("user %s created", newUser.Fullname),
+			Message: fmt.Sprintf("user %s created", newUser.Email),
 		})
 	}
 
+}
+
+func (h *UserHandler) GetAll(ctx *gin.Context) {
+
+	users := h.svc.GetAll()
+
+	ctx.JSON(http.StatusOK, lib.Response{
+		Success: true,
+		Results: users,
+	})
 }
