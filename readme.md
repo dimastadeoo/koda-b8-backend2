@@ -22,7 +22,7 @@ untuk alur program berjalan
 
 Models -> Repo -> Service -> handler -> container 
 
-penyimpanan pada endpoint ini menggunakan variabel
+penyimpanan pada endpoint ini menggunakan Database SQL
 
 untuk melakukan pengujian saya menggunakan ekstension VSCode REST Client dengan Script
 ### Test di tools Http Method
@@ -50,4 +50,19 @@ email=dimas4@mail.com&password=123
 ### install dependancy
 ```bash
 go mod tidy
+```
+
+## ERD Table
+
+```mermaid
+erDiagram
+    users {
+        BIGINT id PK
+        VARCHAR pin
+        VARCHAR fullname
+        VARCHAR email UK
+        VARCHAR password
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
 ```
