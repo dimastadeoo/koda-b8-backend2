@@ -52,3 +52,31 @@ func (h *UserHandler) GetAll(ctx *gin.Context) {
 		Results: users,
 	})
 }
+
+func (h *UserHandler) Login(ctx *gin.Context) {
+
+	email := ctx.PostForm("email")
+	password := ctx.PostForm("password")
+
+	user, err := h.svc.Login(&models.LoginUser{
+		Email:    email,
+		Password: password,
+	})
+
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, lib.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, lib.Response{
+		Success: true,
+		Message: "login berhasil",
+		Results: gin.H{
+			"fullname": user.Fullname,
+			"email":    user.Email,
+		},
+	})
+}
