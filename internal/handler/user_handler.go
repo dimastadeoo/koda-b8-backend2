@@ -66,13 +66,22 @@ func (h *UserHandler) GetAll(ctx *gin.Context) {
 
 func (h *UserHandler) Login(ctx *gin.Context) {
 
-	email := ctx.PostForm("email")
-	password := ctx.PostForm("password")
+	var form models.LoginUser
 
-	user, err := h.svc.Login(&models.LoginUser{
-		Email:    email,
-		Password: password,
-	})
+	err := ctx.ShouldBind(&form)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, lib.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	// email := ctx.PostForm("email")
+	// password := ctx.PostForm("password")
+
+	user, err := h.svc.Login(&form)
 
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, lib.Response{
