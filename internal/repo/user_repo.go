@@ -38,3 +38,13 @@ func (u *UserRepo) Create(create *models.RegisterUsers) (models.Users, error) {
 func (r *UserRepo) GetAll() []models.Users {
     return *r.data
 }
+
+func (r *UserRepo) FindByEmail(email string) (*models.Users, error) {
+	for _, user := range *r.data {
+		if user.Email == email {
+			return &user, nil
+		}
+	}
+
+	return nil, nil
+}
