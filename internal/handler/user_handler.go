@@ -56,7 +56,15 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 
 func (h *UserHandler) GetAll(ctx *gin.Context) {
 
-	users := h.svc.GetAll()
+	users, err := h.svc.GetAll()
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, lib.Response{
+		Success: false,
+		Message: err.Error(),
+		Results: users,
+	})
+	}
 
 	ctx.JSON(http.StatusOK, lib.Response{
 		Success: true,
