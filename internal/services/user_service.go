@@ -31,7 +31,7 @@ func (r *UserService) Register(user *models.RegisterUsers) (models.Users, error)
 	return r.repo.Create(user)
 }
 
-func (s *UserService) GetAll() []models.Users {
+func (s *UserService) GetAll() ([]models.Users, error) {
     return s.repo.GetAll()
 }
 
