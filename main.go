@@ -17,6 +17,7 @@ func main() {
 
 	r.POST("/users", container.Users().Register)
 	r.GET("/users", container.Users().GetAll)
+	r.POST("/login", container.Users().Login)
 
 	r.Run("0.0.0.0:8080")
 }
