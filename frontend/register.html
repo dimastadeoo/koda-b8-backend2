@@ -4,35 +4,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Register</title>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
     <div class="container">
-        <h2>Register</h2>
-        <form id="registerForm">
-            <div class="form-group">
-                <label>Fullname</label>
-                <input type="text" name="fullname">
+        <div class="modal-content" style="margin:50px auto;">
+            <div class="modal-header">
+                <h2>Register</h2>
             </div>
 
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email">
-            </div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Fullname</label>
+                    <input
+                        type="text"
+                        name="fullname"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input
+                        type="email"
+                        name="email"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label>Retype Password</label>
+                    <input
+                        type="password"
+                        id="retypePassword"
+                        required>
+                </div>
 
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password">
-            </div>
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                    style="width:100%;">
+                    Register
+                </button>
+            </form>
 
-            <button>Register</button>
-        </form>
+            <br>
 
-        <br>
-        <a href="login.html">Sudah punya akun?</a>
+            <p style="text-align:center;">
+                Sudah punya akun?
+                <a href="login.html">
+                    Login
+                </a>
+            </p>
+        </div>
     </div>
 
     <script src="js/register.js"></script>
