@@ -152,7 +152,7 @@ func (u *UserRepo) Update(id int, req *models.RegisterUsers) (models.Users, erro
 
 	query := `
 			UPDATE users
-			SET fullname = $1, email = $2, password = $3
+			SET fullname = $1, email = $2, password = $3, updated_at = NOW()
 			WHERE id = $4
 			RETURNING id, fullname, email
 	`
