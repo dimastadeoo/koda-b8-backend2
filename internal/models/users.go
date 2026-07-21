@@ -17,6 +17,11 @@ type RegisterUsers struct {
 	Password  string `json:"-" form:"password" binding:"required"`
 }
 
+type UpdateUser struct{
+	Fullname  string `json:"fullname" form:"fullname" binding:"required"`
+	Email     string `json:"email" form:"email" binding:"required,email"`
+}
+
 type LoginUser struct {
 	Email     string `json:"email" form:"email" binding:"required,email"`
 	Password  string `json:"-" form:"password" binding:"required"`
