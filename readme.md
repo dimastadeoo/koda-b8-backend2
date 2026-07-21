@@ -81,9 +81,22 @@ Frontend
         <td>Login</td>
     </tr>
     <tr>
-        <td><img src="img/Screenshot_2026-07-20_15-02-03.png" alt="Register"></td>
-        <td><img src="img/Screenshot_2026-07-20_15-02-27.png" alt="All Data"></td>
-        <td><img src="img/Screenshot_2026-07-20_15-02-36.png" alt="Login"></td>
+        <td><img src="img/Screenshot_2026-07-21_21-59-47.png" alt="Register"></td>
+        <td><img src="img/Screenshot_2026-07-21_22-00-03.png" alt="All Data"></td>
+        <td><img src="img/Screenshot_2026-07-21_21-59-42.png" alt="Login"></td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <td>Tambah data</td>
+        <td>Update Data</td>
+        <td>Delete Data</td>
+    </tr>
+    <tr>
+        <td><img src="img/Screenshot_2026-07-21_22-00-13.png" alt="Add Data"></td>
+        <td><img src="img/Screenshot_2026-07-21_22-00-21.png" alt="Update"></td>
+        <td><img src="img/Screenshot_2026-07-21_22-00-27.png" alt="Delete"></td>
     </tr>
 </table>
 
