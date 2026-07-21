@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/dimastadeoo/backend1/internal/lib"
 	"github.com/dimastadeoo/backend1/internal/models"
@@ -103,8 +104,108 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 		Success: true,
 		Message: "login berhasil",
 		Results: gin.H{
+			"token" : "hello",
 			"fullname": user.Fullname,
 			"email":    user.Email,
 		},
 	})
 }
+
+func (h *UserHandler) FindById(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, lib.Response{
+			Success: false,
+			Message: "Id Not Valid",
+		})
+		return
+	}
+	user,err := h.svc.FindById(id)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, lib.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+	} else {
+		ctx.JSON(http.StatusOK, lib.Response{
+			Success: true,
+			Message: "sukses get data",
+			Results: user,
+		})
+	}
+
+}
+
+func (h *UserHandler) Update(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, lib.Response{
+			Success: false,
+			Message: "Id Not Valid",
+		})
+		return
+	}
+	var form models.RegisterUsers
+	err = ctx.ShouldBind(&form)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, lib.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	// fullname := ctx.PostForm("fullname")
+	// email := ctx.PostForm("email")
+	// password := ctx.PostForm("password")
+	updateUser, err := h.svc.Update(id, &form)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, lib.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+	} else {
+		ctx.JSON(http.StatusOK, lib.Response{
+			Success: true,
+			Message: fmt.Sprintf("user %s success updated", updateUser.Email),
+			Results: updateUser,
+		})
+	}
+
+}
+
+func (h *UserHandler) Delete(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, lib.Response{
+			Success: false,
+			Message: "Id Not Valid",
+		})
+		return
+	}
+
+	// fullname := ctx.PostForm("fullname")
+	// email := ctx.PostForm("email")
+	// password := ctx.PostForm("password")
+	err = h.svc.Delete(id)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, lib.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+	} else {
+		ctx.JSON(http.StatusOK, lib.Response{
+			Success: true,
+			Message: "User Success Deleted",
+		})
+	}
+
+}
+
+
+
+
