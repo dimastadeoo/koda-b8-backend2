@@ -1,9 +1,6 @@
 const API = "http://localhost:8080";
-
 const token = localStorage.getItem("token");
-// if (!token) {
-//     location.href = "login.html";
-// }
+
 const tbody = document.getElementById("tbody");
 const form = document.getElementById("userForm");
 const submitBtn = document.getElementById("submitBtn");
@@ -24,12 +21,19 @@ async function getUsers() {
     const data = await res.json();
     tbody.innerHTML = "";
     let i = 1
+
+    if (!token) {
+        alert(data.message + " Please Login First")
+        location.href = "login.html";
+    }       
     data.results.forEach(user => {
         tbody.innerHTML += `
             <tr>
                 <td>${i++}</td>
                 <td>${user.fullname}</td>
                 <td>${user.email}</td>
+                <td>${user.created_at}</td>
+                <td>${user.updated_at}</td>
                 <td>
                     <button onclick="editUser(${user.id})">
                         Edit
