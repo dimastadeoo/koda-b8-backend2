@@ -1,0 +1,170 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#f5f5f5;
+}
+
+.container{
+    width:420px;
+    margin:120px auto;
+    background:#fff;
+    padding:40px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,.15);
+    text-align:center;
+}
+
+h1{
+    margin-bottom:10px;
+}
+
+.subtitle{
+    color:#777;
+    margin-bottom:30px;
+}
+
+.menu{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.menu a{
+    text-decoration:none;
+}
+
+.btn-primary,
+.btn-secondary{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.btn-primary{
+    background:#007bff;
+    color:white;
+}
+
+.btn-primary:hover{
+    background:#0056b3;
+}
+
+.btn-secondary{
+    background:#28a745;
+    color:white;
+}
+
+.btn-secondary:hover{
+    background:#1f7f35;
+}
+
+h2{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.form-group{
+    margin-bottom:15px;
+}
+
+label{
+    display:block;
+    margin-bottom:5px;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    border:1px solid #ddd;
+    border-radius:6px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    background:#007bff;
+    color:white;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.button{
+    display: flex;
+    gap: 12px;
+    
+}
+
+button:hover{
+    background:#0056b3;
+}
+
+a{
+    text-decoration:none;
+}
+
+.table-container{
+    width:90%;
+    margin:40px auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+}
+
+th,td{
+    border:1px solid #ddd;
+    padding:10px;
+}
+
+th{
+    background:#007bff;
+    color:white;
+}
+
+.action button{
+    width:auto;
+    margin-right:5px;
+    padding:8px 12px;
+}
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.logout-btn{
+    width:120px;
+    background:red;
+}
+
+.logout-btn:hover{
+    background:darkred;
+}
+
+form{
+    background:white;
+    padding:20px;
+    border-radius:8px;
+    margin-bottom:20px;
+    box-shadow:0 2px 5px rgba(0,0,0,.15);
+}
+
+table button{
+    width:auto;
+    padding:6px 10px;
+    margin-right:5px;
+}
