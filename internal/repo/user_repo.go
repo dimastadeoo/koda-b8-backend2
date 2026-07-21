@@ -148,12 +148,12 @@ func (u *UserRepo) FindById(id int) (*models.Users, error) {
 	return &user, nil
 }
 
-func (u *UserRepo) Update(id int, req *models.RegisterUsers) (models.Users, error){
+func (u *UserRepo) Update(id int, req *models.UpdateUser) (models.Users, error){
 
 	query := `
 			UPDATE users
-			SET fullname = $1, email = $2, password = $3, updated_at = NOW()
-			WHERE id = $4
+			SET fullname = $1, email = $2, updated_at = NOW()
+			WHERE id = $3
 			RETURNING id, fullname, email
 	`
 	var user models.Users
@@ -163,7 +163,6 @@ func (u *UserRepo) Update(id int, req *models.RegisterUsers) (models.Users, erro
 		query,
 		req.Fullname,
 		req.Email,
-		req.Password,
 		id,
 	).Scan(
 		&user.Id,
@@ -174,7 +173,6 @@ func (u *UserRepo) Update(id int, req *models.RegisterUsers) (models.Users, erro
 	if err != nil {
 		return models.Users{}, err
 	}
-
 	return user, nil
 }
 
@@ -197,6 +195,5 @@ func (u *UserRepo) Delete(id int) error{
 	if cmd.RowsAffected() == 0 {
 		return errors.New("User tidak ditemukan")
 	}
-
 	return nil
 }
