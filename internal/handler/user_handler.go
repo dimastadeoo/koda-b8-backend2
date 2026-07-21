@@ -146,7 +146,7 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 		})
 		return
 	}
-	var form models.RegisterUsers
+	var form models.UpdateUser
 	err = ctx.ShouldBind(&form)
 
 	if err != nil {
