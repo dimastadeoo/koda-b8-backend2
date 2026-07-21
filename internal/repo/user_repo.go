@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 
 	"github.com/dimastadeoo/backend1/internal/models"
 	"github.com/jackc/pgx/v5"
@@ -112,4 +113,90 @@ func (u *UserRepo) FindByEmail(email string) (*models.Users, error) {
 	}
 
 	return &user, nil
+}
+
+func (u *UserRepo) FindById(id int) (*models.Users, error) {
+	var user models.Users
+
+	query := `
+			SELECT id, fullname, email, password, created_at, updated_at
+			FROM users
+			WHERE id=$1
+	`
+
+	err := u.data.QueryRow(
+		context.Background(),
+		query,
+		id,
+	).Scan(
+		&user.Id,
+		&user.Fullname,
+		&user.Email,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+
+	if err != nil {
+		if err == pgx.ErrNoRows{
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (u *UserRepo) Update(id int, req *models.RegisterUsers) (models.Users, error){
+
+	query := `
+			UPDATE users
+			SET fullname = $1, email = $2, password = $3
+			WHERE id = $4
+			RETURNING id, fullname, email
+	`
+	var user models.Users
+
+	err := u.data.QueryRow(
+		context.Background(),
+		query,
+		req.Fullname,
+		req.Email,
+		req.Password,
+		id,
+	).Scan(
+		&user.Id,
+		&user.Fullname,
+		&user.Email,
+	)
+
+	if err != nil {
+		return models.Users{}, err
+	}
+
+	return user, nil
+}
+
+func (u *UserRepo) Delete(id int) error{
+
+	query := `
+			DELETE FROM users
+			WHERE id = $1
+	`
+	cmd, err := u.data.Exec(
+		context.Background(),
+		query,
+		id,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	if cmd.RowsAffected() == 0 {
+		return errors.New("User tidak ditemukan")
+	}
+
+	return nil
 }
