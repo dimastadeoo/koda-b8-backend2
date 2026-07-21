@@ -59,19 +59,7 @@ func (s *UserService) FindById(id int) (*models.Users, error) {
 	return s.repo.FindById(id)
 }
 
-func (r *UserService) Update(id int, user *models.RegisterUsers) (models.Users, error) {
-	if user.Password != ""{
-		hash, err := bcrypt.GenerateFromPassword(
-			[]byte(user.Password),
-			bcrypt.DefaultCost,
-		)
-		
-		if err != nil {
-			return models.Users{}, err
-		}
-		user.Password = string(hash)
-	}
-	
+func (r *UserService) Update(id int, user *models.UpdateUser) (models.Users, error) {
 	return r.repo.Update(id, user)
 }
 
