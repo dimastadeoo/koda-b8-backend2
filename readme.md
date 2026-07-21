@@ -154,26 +154,22 @@ erDiagram
     }
 ```
 
-
-
 ---
 
 # Struktur Project
 
 ```text
 .
-├── cmd/
 ├── internal/
-│   ├── container/
-│   ├── db/
+│   ├── di/
 │   ├── handler/
-│   ├── middleware/
+│   ├── middlewares/
 │   ├── models/
 │   ├── repo/
 │   ├── services/
 │   └── lib/
 │
-├── web/
+├── frontend/
 │   ├── css/
 │   ├── js/
 │   ├── index.html
@@ -181,8 +177,13 @@ erDiagram
 │   ├── register.html
 │   └── users.html
 │
+├── migrations/
 ├── .env
 ├── go.mod
+├── go.sum
+├── main.go
+├── main.go
+├── Makefile
 └── README.md
 ```
 
@@ -213,7 +214,7 @@ go mod tidy
 Buat file **.env**
 
 ```env
-DATABASE_URL=postgres://username:password@host:port/database
+DATABASE_URL=postgres://username:password@host:port/database?sslmode=disable
 PORT=Port Backend
 PORT_FRONTEND= Port Frontend
 
