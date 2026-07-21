@@ -71,6 +71,7 @@ help:
 	@echo "  make migration-version"
 	@echo "  make migration-force"
 	@echo "  make migration-drop"
+	@echo "  make fresh"
 	@echo "  make run"
 	@echo "  make build"
 	@echo "  make tidy"
