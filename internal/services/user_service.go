@@ -21,18 +21,15 @@ func (r *UserService) Register(user *models.RegisterUsers) (models.Users, error)
 		[]byte(user.Password),
 		bcrypt.DefaultCost,
 	)
-
 	if err != nil {
 		return models.Users{}, err
 	}
-
 	user.Password = string(hash)
-
 	return r.repo.Create(user)
 }
 
 func (s *UserService) GetAll() ([]models.Users, error) {
-    return s.repo.GetAll()
+	return s.repo.GetAll()
 }
 
 func (s *UserService) Login(req *models.LoginUser) (*models.Users, error) {
@@ -56,4 +53,28 @@ func (s *UserService) Login(req *models.LoginUser) (*models.Users, error) {
 	}
 
 	return user, nil
+}
+
+func (s *UserService) FindById(id int) (*models.Users, error) {
+	return s.repo.FindById(id)
+}
+
+func (r *UserService) Update(id int, user *models.RegisterUsers) (models.Users, error) {
+	if user.Password != ""{
+		hash, err := bcrypt.GenerateFromPassword(
+			[]byte(user.Password),
+			bcrypt.DefaultCost,
+		)
+		
+		if err != nil {
+			return models.Users{}, err
+		}
+		user.Password = string(hash)
+	}
+	
+	return r.repo.Update(id, user)
+}
+
+func (r *UserService) Delete(id int) error {
+	return r.repo.Delete(id)
 }
