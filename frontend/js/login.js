@@ -1,22 +1,29 @@
-const form=document.getElementById("loginForm");
+const API = "http://localhost:8080";
 
-form.addEventListener("submit",async(e)=>{
+const form = document.getElementById("loginForm");
+
+form.addEventListener("submit", async function (e) {
     e.preventDefault();
+    const formData = new FormData(form);
+    try {
 
-    const formData=new FormData(form);
+        const res = await fetch(`${API}/auth/login`, {
+            method: "POST",
+            body: new URLSearchParams(formData)
+        });
+        const data = await res.json();
 
-    const res=await fetch("http://localhost:8080/auth/login",{
+        if (!data.success) {
+            alert(data.message);
+            return;
+        }
+        // Simpan token
+        localStorage.setItem("token", data.results.token);
+        alert(data.message);
+        window.location.href = "users.html";
 
-        method:"POST",
-        body: new URLSearchParams(formData)
-    });
-
-    const data=await res.json();
-    alert(data.message);
-
-    if(data.success){
-        localStorage.setItem("token", data.results.token)
-        location.href="users.html";
+    } catch (err) {
+        console.error(err);
+        alert("Terjadi kesalahan.");
     }
-
 });
