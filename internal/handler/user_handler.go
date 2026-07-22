@@ -33,9 +33,9 @@ func NewHandlerUser(svc *services.UserService) *UserHandler {
 // @Param        fullname formData string true "User full name"
 // @Param        email    formData string true "User email" Format(email)
 // @Param        password formData string true "User password" Format(password)
-// @Success      201  {object}  map[string]interface{}  "Returns user data or success message"
-// @Failure      400  {object}  map[string]interface{}  "Invalid request payload (e.g., missing fields, invalid email format)"
-// @Failure      409  {object}  map[string]interface{}  "Email already exists"
+// @Success      201  {object}  lib.Response  "Returns user data or success message"
+// @Failure      400  {object}  lib.Response  "Invalid request payload (e.g., missing fields, invalid email format)"
+// @Failure      409  {object}  lib.Response  "Email already exists"
 // @Router       /auth/register [POST]
 func (h *UserHandler) Register(ctx *gin.Context) {
 	var form models.RegisterUsers
@@ -68,6 +68,25 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 		})
 	}
 
+}
+
+// CreateUser untuk admin (endpoint /users)
+// @Summary      Create a new user (require auth login)
+// @Description  Admin creates a new user account. Requires authentication.
+// @Tags         users
+// @Accept       x-www-form-urlencoded
+// @Produce      json
+// @Param        fullname formData string true "User full name"
+// @Param        email    formData string true "User email" Format(email)
+// @Param        password formData string true "User password" Format(password)
+// @Success      201  {object}  lib.Response
+// @Failure      400  {object}  lib.Response
+// @Failure      401  {object}  lib.Response
+// @Failure      403  {object}  lib.Response
+// @Security     Bearer
+// @Router       /users [POST]
+func (h *UserHandler) RegisterAdmin(ctx *gin.Context){
+	h.Register(ctx)
 }
 
 // GetAll godoc
@@ -105,9 +124,9 @@ func (h *UserHandler) GetAll(ctx *gin.Context) {
 // @Produce      json
 // @Param        email    formData string true "User email" Format(email)
 // @Param        password formData string true "User password" Format(password)
-// @Success      200  {object}  map[string]interface{}  "Returns token and user data"
-// @Failure      400  {object}  map[string]interface{}  "Invalid request payload"
-// @Failure      401  {object}  map[string]interface{}  "Invalid email or password"
+// @Success      200  {object}  lib.Response  "Returns token and user data"
+// @Failure      400  {object}  lib.Response  "Invalid request payload"
+// @Failure      401  {object}  lib.Response  "Invalid email or password"
 // @Router       /auth/login [POST]
 func (h *UserHandler) Login(ctx *gin.Context) {
 
@@ -146,7 +165,20 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 		},
 	})
 }
-
+// FindById godoc
+// @Summary      Get user by ID
+// @Description  Retrieves detailed information of a specific user by their unique ID. Requires authentication.
+// @Tags         users
+// @Accept       x-www-form-urlencoded
+// @Produce      json
+// @Param        id   path      string  true  "User ID"
+// @Success      200  {object}  models.Users "Returns the user data (password excluded)"
+// @Failure      400  {object}  lib.Response  "Invalid ID format"
+// @Failure      401  {object}  lib.Response  "Unauthorized (missing or invalid JWT)"
+// @Failure      404  {object}  lib.Response  "User not found"
+// @Failure      500  {object}  lib.Response  "Internal server error"
+// @Security     Bearer
+// @Router       /users/{id} [GET]
 func (h *UserHandler) FindById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -163,16 +195,33 @@ func (h *UserHandler) FindById(ctx *gin.Context) {
 			Success: false,
 			Message: err.Error(),
 		})
-	} else {
-		ctx.JSON(http.StatusOK, lib.Response{
-			Success: true,
-			Message: "sukses get data",
-			Results: user,
-		})
-	}
+		return
+	} 
+	ctx.JSON(http.StatusOK, lib.Response{
+		Success: true,
+		Message: "sukses get data",
+		Results: user,
+	})
 
 }
 
+// Update godoc
+// @Summary      Update user's fullname and email
+// @Description  Updates the fullname and email of an existing user. Requires authentication (JWT) and the user must own the account or have admin privileges.
+// @Tags         users
+// @Accept       x-www-form-urlencoded
+// @Produce      json
+// @Param        id        path      string  true  "User ID"
+// @Param        fullname  formData  string  true  "New full name"
+// @Param        email     formData  string  true  "New email" Format(email)
+// @Success      200       {object}  models.Users  "Returns updated user data"
+// @Failure      400       {object}  lib.Response  "Invalid request payload"
+// @Failure      401       {object}  lib.Response  "Unauthorized"
+// @Failure      403       {object}  lib.Response  "Forbidden"
+// @Failure      404       {object}  lib.Response  "User not found"
+// @Failure      500       {object}  lib.Response  "Internal server error"
+// @Security     Bearer
+// @Router       /users/{id} [PATCH]
 func (h *UserHandler) Update(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -212,7 +261,20 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 	}
 
 }
-
+// UpdatePicture godoc
+// @Summary      Update user profile picture
+// @Description  Uploads a new profile picture for the user. The file must be in JPG, JPEG, PNG, or WEBP format with a maximum size of 2 MB. The old picture file will be automatically removed.
+// @Tags         users
+// @Accept       multipart/form-data
+// @Produce      json
+// @Param        id      path      string  true  "User ID (numeric)"
+// @Param        picture formData  file    true  "Profile picture file (jpg, jpeg, png, webp, max 2MB)"
+// @Success      200     {object}  lib.Response  "Returns success message: 'user <email> success updated picture'"
+// @Failure      400     {object}  lib.Response  "Invalid ID format, invalid file extension, file too large, or other bad request"
+// @Failure      404     {object}  lib.Response  "User not found"
+// @Failure      500     {object}  lib.Response  "Internal server error (e.g., file save failed)"
+// @Security     Bearer
+// @Router       /users/{id}/picture [PATCH] 
 func (h *UserHandler) UpdatePicture(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -307,7 +369,21 @@ func (h *UserHandler) UpdatePicture(ctx *gin.Context) {
 	})
 
 }
-
+// Delete godoc
+// @Summary      Delete user by ID
+// @Description  Permanently deletes a user from the system. Requires authentication and proper authorization (user owns the account or admin).
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "User ID (numeric)"
+// @Success      200  {object}  lib.Response  "User Success Deleted"
+// @Failure      400  {object}  lib.Response  "Invalid ID format or service error (e.g., user not found)"
+// @Failure      401  {object}  lib.Response  "Unauthorized (missing or invalid JWT)"
+// @Failure      403  {object}  lib.Response  "Forbidden (not authorized to delete this user)"
+// @Failure      404  {object}  lib.Response  "User not found"
+// @Failure      500  {object}  lib.Response  "Internal server error"
+// @Security     Bearer
+// @Router       /users/{id} [DELETE]
 func (h *UserHandler) Delete(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
