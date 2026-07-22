@@ -3,7 +3,11 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/dimastadeoo/backend1/internal/lib"
 	"github.com/dimastadeoo/backend1/internal/models"
@@ -22,6 +26,7 @@ func NewHandlerUser(svc *services.UserService) *UserHandler {
 
 func (h *UserHandler) Register(ctx *gin.Context) {
 	var form models.RegisterUsers
+	curentUser, _ := ctx.Get("userId")
 
 	err := ctx.ShouldBind(&form)
 
@@ -36,22 +41,24 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 	// fullname := ctx.PostForm("fullname")
 	// email := ctx.PostForm("email")
 	// password := ctx.PostForm("password")
+	fmt.Println(curentUser.(*int))
+	
+	// form.CreatedBy = curentUser.(*int)
 
+	// fmt.Println(&form)
+	// newUser, err := h.svc.Register(&form)
 
-
-	newUser, err := h.svc.Register(&form)
-
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, lib.Response{
-			Success: false,
-			Message: err.Error(),
-		})
-	} else {
-		ctx.JSON(http.StatusOK, lib.Response{
-			Success: true,
-			Message: fmt.Sprintf("user %s created", newUser.Email),
-		})
-	}
+	// if err != nil {
+	// 	ctx.JSON(http.StatusBadRequest, lib.Response{
+	// 		Success: false,
+	// 		Message: err.Error(),
+	// 	})
+	// } else {
+	// 	ctx.JSON(http.StatusOK, lib.Response{
+	// 		Success: true,
+	// 		Message: fmt.Sprintf("user %s created", newUser.Email),
+	// 	})
+	// }
 
 }
 
@@ -104,7 +111,7 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 		Success: true,
 		Message: "login berhasil",
 		Results: gin.H{
-			"token" : "hello",
+			"token" : lib.GeneratedToken(user.Id),
 			"fullname": user.Fullname,
 			"email":    user.Email,
 		},
@@ -177,6 +184,102 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 
 }
 
+func (h *UserHandler) UpdatePicture(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, lib.Response{
+			Success: false,
+			Message: "Id Not Valid",
+		})
+		return
+	}
+
+	file, err := ctx.FormFile("picture")
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, lib.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	// Validasi extensions
+
+	ext := strings.ToLower(filepath.Ext(file.Filename))
+	allowed := map[string]bool{
+		".jpg": true,
+		".jpeg": true,
+		".png": true,
+		".webp": true,
+	}
+	if !allowed[ext] {
+		ctx.JSON(http.StatusBadRequest, lib.Response{
+			Success: false,
+			Message: "upload file only jpg, jpeg, png, webpg extension",
+		})
+		return
+	}
+
+	// validasi size
+	const maxSize = 2 << 20 
+	if file.Size > maxSize {
+		ctx.JSON(http.StatusBadRequest, lib.Response{
+			Success: false,
+			Message: "Maximum file size is 2 MB",
+		})
+		return
+	}
+
+	// Get User
+	user, err := h.svc.FindById(id)
+
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, lib.Response{
+			Success: false,
+			Message: "User Not Found",
+		})
+		return
+	}
+	
+	// save file new img
+	filename := fmt.Sprintf("image-picture-%d%d%s", id, time.Now().Unix(), ext)
+	path := "uploads/" + filename
+	err = ctx.SaveUploadedFile(file, path)
+	
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, lib.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+	
+	// save path to database
+	UpdatePicture, err := h.svc.UpdatePicture(id, &models.UpdatePicture{
+		Picture: path,
+	})
+	
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, lib.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	} 
+	// remove file old img before update
+	if user.Picture != nil{
+		os.Remove(*user.Picture)
+	}
+
+	ctx.JSON(http.StatusOK, lib.Response{
+		Success: true,
+		Message: fmt.Sprintf("user %s success updated picture", UpdatePicture.Email),
+	})
+	
+}
+
 func (h *UserHandler) Delete(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -205,6 +308,7 @@ func (h *UserHandler) Delete(ctx *gin.Context) {
 	}
 
 }
+
 
 
 
