@@ -31,14 +31,17 @@ async function getUsers() {
         }
 
     });
+    
+    if (res.status === 401 || res.status === 400) {
+        localStorage.removeItem("token");
+        alert("Please Login First")
+        location.href = "login.html";
+    }
+    
     const data = await res.json();
     tbody.innerHTML = "";
     let i = 1
 
-    if (!token) {
-        alert(data.message + " Please Login First")
-        location.href = "login.html";
-    }
     data.results.forEach(user => {
         const picture = user.picture 
             ? `${API}/${user.picture}`
