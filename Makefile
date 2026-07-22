@@ -40,7 +40,7 @@ fresh:
 	migrate -path $(MIGRATION_PATH) -database "$(DATABASE_URL)" up
 
 # ===========================
-# Run Project
+# Start Backend
 # ===========================
 
 run:
@@ -60,6 +60,16 @@ tidy:
 build:
 	go build -o bin/app main.go
 
+# ===========================
+# Start Server Frontend
+# ===========================
+
+start-frontend:
+	npx serve ./frontend -l "$(PORT_FRONTEND)"
+
+# ===========================
+# Help
+# ===========================
 .PHONY: help
 
 help:
@@ -72,6 +82,7 @@ help:
 	@echo "  make migration-force"
 	@echo "  make migration-drop"
 	@echo "  make fresh"
+	@echo "  make start-frontend"
 	@echo "  make run"
 	@echo "  make build"
 	@echo "  make tidy"
