@@ -4,12 +4,22 @@ import (
 	"log"
 	"os"
 
+	"github.com/dimastadeoo/backend1/docs"
 	"github.com/dimastadeoo/backend1/internal/di"
 	"github.com/dimastadeoo/backend1/internal/middlewares"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @contact.name
+// @contact.email  dimastadeoo@gmail.com
+
+// @securityDefinitions.apikey Bearer
+// @in                         header
+// @name                       Authorization
+// @description                Type "Bearer " followed by a space and your JWT token.
 func main() {
 	godotenv.Load()
 	container, err := di.NewContainer()
@@ -18,7 +28,16 @@ func main() {
 	}
 	user := container.Users()
 
+	// // programmatically set swagger info
+	docs.SwaggerInfo.Title = "Backend CRUD"
+	docs.SwaggerInfo.Description = "This is my first Backend CRUD"
+	docs.SwaggerInfo.Version = "1.0.0"
+	docs.SwaggerInfo.Host = "localhost:8080"
+	docs.SwaggerInfo.BasePath = "/"
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}
+
 	r := gin.Default()
+	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.Static("/uploads", "./uploads")
 	r.Use(middlewares.Cors())
 
