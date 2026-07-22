@@ -26,10 +26,9 @@ func NewHandlerUser(svc *services.UserService) *UserHandler {
 
 func (h *UserHandler) Register(ctx *gin.Context) {
 	var form models.RegisterUsers
-	curentUser, _ := ctx.Get("userId")
-
+	
 	err := ctx.ShouldBind(&form)
-
+	
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, lib.Response{
 			Success: false,
@@ -37,28 +36,23 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 		})
 		return
 	}
-
-	// fullname := ctx.PostForm("fullname")
-	// email := ctx.PostForm("email")
-	// password := ctx.PostForm("password")
-	fmt.Println(curentUser.(*int))
+	curentUser, _ := ctx.Get("userId")
 	
-	// form.CreatedBy = curentUser.(*int)
+	form.CreatedBy = curentUser.(*int)
 
-	// fmt.Println(&form)
-	// newUser, err := h.svc.Register(&form)
+	newUser, err := h.svc.Register(&form)
 
-	// if err != nil {
-	// 	ctx.JSON(http.StatusBadRequest, lib.Response{
-	// 		Success: false,
-	// 		Message: err.Error(),
-	// 	})
-	// } else {
-	// 	ctx.JSON(http.StatusOK, lib.Response{
-	// 		Success: true,
-	// 		Message: fmt.Sprintf("user %s created", newUser.Email),
-	// 	})
-	// }
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, lib.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+	} else {
+		ctx.JSON(http.StatusOK, lib.Response{
+			Success: true,
+			Message: fmt.Sprintf("user %s created", newUser.Email),
+		})
+	}
 
 }
 
