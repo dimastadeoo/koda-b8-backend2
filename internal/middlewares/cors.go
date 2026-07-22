@@ -3,7 +3,9 @@ package middlewares
 import (
 	"net/http"
 	"os"
+	"strings"
 
+	"github.com/dimastadeoo/backend1/internal/lib"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -26,14 +28,19 @@ func Cors() gin.HandlerFunc{
 
 func Auth() gin.HandlerFunc{
 	return func(ctx *gin.Context)  {
-		token := ctx.GetHeader("Authorization")
+		authHeader := ctx.GetHeader("Authorization")
+		prefix := "Bearer "
+		if !strings.HasPrefix(authHeader, prefix){
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+		}
+		token, _ := strings.CutPrefix(authHeader, prefix)
 
-		if token != "hello" {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"message": "Unauthorized",
-			})
+		if isValid, userId := lib.VerifyToken(token); isValid {
+			ctx.Set("userId", userId)
+			ctx.Next()
 			return 
 		}
-		ctx.Next()
+		ctx.AbortWithStatus(http.StatusUnauthorized)
+
 	}
 }
