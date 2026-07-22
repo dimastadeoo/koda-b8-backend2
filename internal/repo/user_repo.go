@@ -20,9 +20,9 @@ func NewUserRepo(data *pgxpool.Pool) *UserRepo {
 func (u *UserRepo) Create(create *models.RegisterUsers) (models.Users, error) {
 
 	query := `
-			INSERT INTO users(fullname, email, password)
-			VALUES($1, $2, $3)
-			RETURNING id, fullname, email, password, created_at, updated_at;
+			INSERT INTO users(fullname, email, password, created_by)
+			VALUES($1, $2, $3, $4)
+			RETURNING id, fullname, email, picture, password, created_at, updated_at, created_by;
 	`
 	var user models.Users
 
@@ -31,13 +31,16 @@ func (u *UserRepo) Create(create *models.RegisterUsers) (models.Users, error) {
 		create.Fullname,
 		create.Email,
 		create.Password,
+		create.CreatedBy,
 	).Scan(
 		&user.Id,
 		&user.Fullname,
 		&user.Email,
+		&user.Picture,
 		&user.Password,
 		&user.CreatedAt,
 		&user.UpdatedAt,
+		&user.CreatedBy,
 	)
 
 	if err != nil {
@@ -49,7 +52,7 @@ func (u *UserRepo) Create(create *models.RegisterUsers) (models.Users, error) {
 
 func (u *UserRepo) GetAll() ([]models.Users, error) {
     query := `
-			SELECT id, fullname, email, created_at, updated_at
+			SELECT id, fullname, email, picture, created_at, updated_at, created_by
 			FROM users
 	`
 	data, err := u.data.Query(context.Background(), query)
@@ -68,8 +71,10 @@ func (u *UserRepo) GetAll() ([]models.Users, error) {
 			&user.Id,
 			&user.Fullname,
 			&user.Email,
+			&user.Picture,
 			&user.CreatedAt,
 			&user.UpdatedAt,
+			&user.CreatedBy,
 		)
 
 		if err != nil {
@@ -86,7 +91,7 @@ func (u *UserRepo) FindByEmail(email string) (*models.Users, error) {
 	var user models.Users
 
 	query := `
-			SELECT id, fullname, email, password, created_at, updated_at
+			SELECT id, fullname, email, picture, password, created_at, updated_at, created_by
 			FROM users
 			WHERE email=$1
 	`
@@ -99,9 +104,11 @@ func (u *UserRepo) FindByEmail(email string) (*models.Users, error) {
 		&user.Id,
 		&user.Fullname,
 		&user.Email,
+		&user.Picture,
 		&user.Password,
 		&user.CreatedAt,
 		&user.UpdatedAt,
+		&user.CreatedBy,
 	)
 
 	if err != nil {
@@ -119,7 +126,7 @@ func (u *UserRepo) FindById(id int) (*models.Users, error) {
 	var user models.Users
 
 	query := `
-			SELECT id, fullname, email, password, created_at, updated_at
+			SELECT id, fullname, email, picture, password, created_at, updated_at, created_by
 			FROM users
 			WHERE id=$1
 	`
@@ -132,9 +139,11 @@ func (u *UserRepo) FindById(id int) (*models.Users, error) {
 		&user.Id,
 		&user.Fullname,
 		&user.Email,
+		&user.Picture,
 		&user.Password,
 		&user.CreatedAt,
 		&user.UpdatedAt,
+		&user.CreatedBy,
 	)
 
 	if err != nil {
@@ -163,6 +172,33 @@ func (u *UserRepo) Update(id int, req *models.UpdateUser) (models.Users, error){
 		query,
 		req.Fullname,
 		req.Email,
+		id,
+	).Scan(
+		&user.Id,
+		&user.Fullname,
+		&user.Email,
+	)
+
+	if err != nil {
+		return models.Users{}, err
+	}
+	return user, nil
+}
+
+func (u *UserRepo) UpdatePicture(id int, req *models.UpdatePicture) (models.Users, error){
+
+	query := `
+			UPDATE users
+			SET picture = $1, updated_at = NOW()
+			WHERE id = $2
+			RETURNING id, fullname, email
+	`
+	var user models.Users
+
+	err := u.data.QueryRow(
+		context.Background(),
+		query,
+		req.Picture,
 		id,
 	).Scan(
 		&user.Id,
