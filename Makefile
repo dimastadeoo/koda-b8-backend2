@@ -43,7 +43,7 @@ fresh:
 # Start Backend
 # ===========================
 
-run:
+start-backend:
 	go run main.go
 
 # ===========================
@@ -83,6 +83,6 @@ help:
 	@echo "  make migration-drop"
 	@echo "  make fresh"
 	@echo "  make start-frontend"
-	@echo "  make run"
+	@echo "  make start-backend"
 	@echo "  make build"
 	@echo "  make tidy"
