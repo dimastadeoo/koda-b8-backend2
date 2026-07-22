@@ -19,6 +19,7 @@ func main() {
 	user := container.Users()
 
 	r := gin.Default()
+	r.Static("/uploads", "./uploads")
 	r.Use(middlewares.Cors())
 
 	{
@@ -34,6 +35,7 @@ func main() {
 		users.POST("", user.Register)
 		users.GET("/:id", user.FindById)
 		users.PATCH("/:id", user.Update)
+		users.PATCH("/:id/picture", user.UpdatePicture)
 		users.DELETE("/:id", user.Delete)
 
 	}
