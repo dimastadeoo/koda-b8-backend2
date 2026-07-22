@@ -22,7 +22,7 @@ func (u *UserRepo) Create(create *models.RegisterUsers) (models.Users, error) {
 	query := `
 			INSERT INTO users(fullname, email, password, created_by)
 			VALUES($1, $2, $3, $4)
-			RETURNING id, fullname, email, picture, password, created_at, updated_at, created_by;
+			RETURNING id, fullname, email, picture, created_at, updated_at, created_by;
 	`
 	var user models.Users
 
@@ -37,7 +37,6 @@ func (u *UserRepo) Create(create *models.RegisterUsers) (models.Users, error) {
 		&user.Fullname,
 		&user.Email,
 		&user.Picture,
-		&user.Password,
 		&user.CreatedAt,
 		&user.UpdatedAt,
 		&user.CreatedBy,
@@ -51,12 +50,12 @@ func (u *UserRepo) Create(create *models.RegisterUsers) (models.Users, error) {
 }
 
 func (u *UserRepo) GetAll() ([]models.Users, error) {
-    query := `
+	query := `
 			SELECT id, fullname, email, picture, created_at, updated_at, created_by
 			FROM users
 	`
 	data, err := u.data.Query(context.Background(), query)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
@@ -64,7 +63,7 @@ func (u *UserRepo) GetAll() ([]models.Users, error) {
 
 	users := []models.Users{}
 
-	for data.Next(){
+	for data.Next() {
 		var user models.Users
 
 		err := data.Scan(
@@ -112,7 +111,7 @@ func (u *UserRepo) FindByEmail(email string) (*models.Users, error) {
 	)
 
 	if err != nil {
-		if err == pgx.ErrNoRows{
+		if err == pgx.ErrNoRows {
 			return nil, nil
 		}
 
@@ -126,7 +125,7 @@ func (u *UserRepo) FindById(id int) (*models.Users, error) {
 	var user models.Users
 
 	query := `
-			SELECT id, fullname, email, picture, password, created_at, updated_at, created_by
+			SELECT id, fullname, email, picture, created_at, updated_at, created_by
 			FROM users
 			WHERE id=$1
 	`
@@ -140,15 +139,14 @@ func (u *UserRepo) FindById(id int) (*models.Users, error) {
 		&user.Fullname,
 		&user.Email,
 		&user.Picture,
-		&user.Password,
 		&user.CreatedAt,
 		&user.UpdatedAt,
 		&user.CreatedBy,
 	)
 
 	if err != nil {
-		if err == pgx.ErrNoRows{
-			return nil, nil
+		if err == pgx.ErrNoRows {
+			return nil, errors.New("Users not found")
 		}
 
 		return nil, err
@@ -157,7 +155,7 @@ func (u *UserRepo) FindById(id int) (*models.Users, error) {
 	return &user, nil
 }
 
-func (u *UserRepo) Update(id int, req *models.UpdateUser) (models.Users, error){
+func (u *UserRepo) Update(id int, req *models.UpdateUser) (models.Users, error) {
 
 	query := `
 			UPDATE users
@@ -185,7 +183,7 @@ func (u *UserRepo) Update(id int, req *models.UpdateUser) (models.Users, error){
 	return user, nil
 }
 
-func (u *UserRepo) UpdatePicture(id int, req *models.UpdatePicture) (models.Users, error){
+func (u *UserRepo) UpdatePicture(id int, req *models.UpdatePicture) (models.Users, error) {
 
 	query := `
 			UPDATE users
@@ -212,7 +210,7 @@ func (u *UserRepo) UpdatePicture(id int, req *models.UpdatePicture) (models.User
 	return user, nil
 }
 
-func (u *UserRepo) Delete(id int) error{
+func (u *UserRepo) Delete(id int) error {
 
 	query := `
 			DELETE FROM users
