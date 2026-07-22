@@ -13,6 +13,10 @@ const email = document.getElementById("email");
 const password = document.getElementById("password");
 const retypePassword = document.getElementById("retypePassword");
 const userId = document.getElementById("userId");
+const pictureInput = document.getElementById("picture");
+const groupPicture = document.getElementById("groupPicture");
+const preview = document.getElementById("previewPicture");
+groupPicture
 
 getUsers();
 // =======================
@@ -34,11 +38,18 @@ async function getUsers() {
     if (!token) {
         alert(data.message + " Please Login First")
         location.href = "login.html";
-    }       
+    }
     data.results.forEach(user => {
+        const picture = user.picture 
+            ? `${API}/${user.picture}`
+            : `${API}/default-image.jpeg`
         tbody.innerHTML += `
             <tr>
                 <td>${i++}</td>
+                <td>
+                    <img src="${picture}" class="avatar"
+                    alt="Picture-Not Found">
+                </td>
                 <td>${user.fullname}</td>
                 <td>${user.email}</td>
                 <td>${user.created_at}</td>
@@ -74,6 +85,7 @@ function openCreateModal() {
     submitBtn.innerHTML = "Simpan";
     passwordGroup.style.display = "block";
     retypePasswordGroup.style.display = "block";
+    groupPicture.style.display = "none"
     password.required = true;
     modal.style.display = "block";
 }
@@ -91,26 +103,88 @@ async function openEditModal(id) {
             }
         });
         const data = await res.json();
+
         if (!data.success) {
             alert(data.message);
             return;
         }
-        userId.value = data.results.id;
-        fullname.value = data.results.fullname;
-        email.value = data.results.email;
+        const user = data.results;
+        userId.value = user.id;
+        fullname.value = user.fullname;
+        email.value = user.email;
+
         password.value = "";
         retypePassword.value = "";
-        modalTitle.innerHTML = "Edit User";
-        submitBtn.innerHTML = "Update";
+        groupPicture.style.display = "block"
         passwordGroup.style.display = "none";
         retypePasswordGroup.style.display = "none";
         password.required = false;
+
+        modalTitle.innerHTML = "Edit User";
+        submitBtn.innerHTML = "Update";
+
+        preview.src = user.picture
+            ? `${API}/${user.picture}`
+            : "img/default-avatar.png";
+
+        pictureInput.value = "";
+
         modal.style.display = "block";
+    } catch (err) {
+
+        console.error(err);
+
+        alert("Gagal mengambil data user.");
+    }
+}
+
+async function uploadPicture(id) {
+
+    if (pictureInput.files.length === 0) {
+        return true;
+    }
+
+    const formData = new FormData();
+    formData.append(
+        "picture",
+        pictureInput.files[0]
+    );
+
+    try {
+
+        const res = await fetch(
+            `${API}/users/${id}/picture`,
+            {
+                method: "PATCH",
+                headers: {
+                    Authorization: token
+                },
+                body: formData
+            }
+        );
+        const data = await res.json();
+
+        if (!data.success) {
+            alert(data.message);
+            return false;
+        }
+        return true;
 
     } catch (err) {
         console.error(err);
+        alert("Gagal upload picture.");
+        return false;
     }
+
 }
+
+
+pictureInput.addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+    preview.src = URL.createObjectURL(file);
+
+});
 
 // =========================
 // CLOSE MODAL
@@ -119,6 +193,9 @@ async function openEditModal(id) {
 function closeModal() {
     form.reset();
     modal.style.display = "none";
+    groupPicture.style.display = "none"
+    preview.src = ""
+    pictureInput.value = ""
 }
 
 // =========================
@@ -152,6 +229,11 @@ form.addEventListener("submit", async function (e) {
         const data = await res.json();
         alert(data.message);
         if (data.success) {
+
+            if (method === "PATCH") {
+                const success = await uploadPicture(id);
+                if (!success) return;
+            }
             closeModal();
             getUsers();
         }

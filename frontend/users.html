@@ -15,14 +15,10 @@
         <header class="header">
             <h1>User Management</h1>
             <div class="header-action">
-                <button
-                    class="btn btn-success"
-                    onclick="openCreateModal()">
+                <button class="btn btn-success" onclick="openCreateModal()">
                     + Tambah User
                 </button>
-                <button
-                    class="btn btn-danger"
-                    onclick="logout()">
+                <button class="btn btn-danger" onclick="logout()">
                     Logout
                 </button>
             </div>
@@ -31,7 +27,8 @@
         <table>
             <thead>
                 <tr>
-                    <th width="80">ID</th>
+                    <th width="60">ID</th>
+                    <th width="90">Picture</th>
                     <th>Fullname</th>
                     <th>Email</th>
                     <th>Created At</th>
@@ -54,61 +51,38 @@
                 <h2 id="modalTitle">
                     Tambah User
                 </h2>
-                <span
-                    class="close"
-                    onclick="closeModal()">
+                <span class="close" onclick="closeModal()">
                     &times;
                 </span>
             </div>
             <form id="userForm">
-                <input
-                    type="hidden"
-                    id="userId"
-                    name="id">
+                <input type="hidden" id="userId" name="id">
                 <div class="form-group">
                     <label>Fullname</label>
-                    <input
-                        type="text"
-                        id="fullname"
-                        name="fullname"
-                        required>
+                    <input type="text" id="fullname" name="fullname" required>
                 </div>
                 <div class="form-group">
                     <label>Email</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        required>
+                    <input type="email" id="email" name="email" required>
                 </div>
-                <div
-                    class="form-group"
-                    id="passwordGroup">
+                <div class="form-group" id="passwordGroup">
                     <label>Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password">
+                    <input type="password" id="password" name="password">
                 </div>
-                <div
-                    class="form-group"
-                    id="retypePasswordGroup">
+                <div class="form-group" id="retypePasswordGroup">
                     <label>Retype Password</label>
-                    <input
-                        type="password"
-                        id="retypePassword">
+                    <input type="password" id="retypePassword">
+                </div>
+                <div class="form-group" id="groupPicture">
+                    <label>Profile Picture</label>
+                    <img id="previewPicture" src="" width="120">
+                    <input type="file" id="picture" accept=".jpg,.jpeg,.png,.webp">
                 </div>
                 <div class="modal-footer">
-                    <button
-                        class="btn btn-primary"
-                        id="submitBtn"
-                        type="submit">
+                    <button class="btn btn-primary" id="submitBtn" type="submit">
                         Simpan
                     </button>
-                    <button
-                        class="btn btn-secondary"
-                        type="button"
-                        onclick="closeModal()">
+                    <button class="btn btn-secondary" type="button" onclick="closeModal()">
                         Batal
                     </button>
                 </div>
