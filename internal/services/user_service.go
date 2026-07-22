@@ -63,6 +63,10 @@ func (r *UserService) Update(id int, user *models.UpdateUser) (models.Users, err
 	return r.repo.Update(id, user)
 }
 
+func (r *UserService) UpdatePicture(id int, user *models.UpdatePicture) (models.Users, error) {
+	return r.repo.UpdatePicture(id, user)
+}
+
 func (r *UserService) Delete(id int) error {
 	return r.repo.Delete(id)
 }
