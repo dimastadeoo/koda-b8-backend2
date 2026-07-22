@@ -51,12 +51,11 @@ func main() {
 		users := r.Group("/users")
 		users.Use(middlewares.Auth())
 		users.GET("", user.GetAll)
-		users.POST("", user.Register)
+		users.POST("", user.RegisterAdmin)
 		users.GET("/:id", user.FindById)
 		users.PATCH("/:id", user.Update)
 		users.PATCH("/:id/picture", user.UpdatePicture)
 		users.DELETE("/:id", user.Delete)
-
 	}
 
 	getPort := os.Getenv("PORT")
