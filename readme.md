@@ -5,15 +5,21 @@ Aplikasi sederhana **User Management** menggunakan **Golang**, **Gin Framework**
 
 Project ini menerapkan arsitektur berlapis (**Repository Pattern**) sehingga setiap layer memiliki tanggung jawab masing-masing.
 
+## API Documentation
+
+http://localhost:8080/swagger/index.html
+
 ## Tech Stack
 
 ### Backend
 
 - Golang
-- Gin Framework
+- Gin Gonic
 - PostgreSQL
 - pgxpool
-- bcrypt
+- JWT
+- Swagger Go
+- golang-migrate
 
 ### Frontend
 
@@ -50,25 +56,35 @@ Penyimpanan data menggunakan **PostgreSQL**.
 
 # Fitur
 
-Backend
+- User Authentication
+    - Register
+    - Login
+    - JWT Authentication
 
-- Register User
-- Login User
-- Get All Users
-- Get User By ID
-- Create User
-- Update User
-- Delete User
+- User Management
+    - Create User
+    - Get All User
+    - Get User By ID
+    - Update User
+    - Delete User
 
-Frontend
+- Upload Profile Picture
+    - Upload Image
+    - Validation Image Extension
+    - Validation File Size
+    - Delete Old Image
 
-- Login
-- Register
-- Dashboard User
-- Tambah User
-- Edit User
-- Delete User
-- Logout
+- Documentation
+    - Swagger UI
+
+- Database
+    - PostgreSQL
+    - Migration
+
+- Frontend
+    - Login
+    - Register
+    - User CRUD
 
 ---
 
@@ -116,17 +132,17 @@ fullname=dimas&email=dimas1@mail.com&password=123
 ### Get All Data dengan Authorization
 GET /users HTTP/1.1
 Host: localhost:8080
-Authorization: hello
+Authorization: Bearer JWT Token
 
 ### Get Data Profile
 GET /users/12 HTTP/1.1
 Host: localhost:8080
-Authorization: hello
+Authorization: Bearer JWT Token
 
 ### Tambah Data user
 POST /users HTTP/1.1
 Host: localhost:8080
-Authorization: hello
+Authorization: Bearer JWT Token
 Content-Type: application/x-www-form-urlencoded
 
 fullname=dimas&email=dimas@mail.com&password=123
@@ -134,15 +150,27 @@ fullname=dimas&email=dimas@mail.com&password=123
 ### Delete Data User
 DELETE /users/17 HTTP/1.1
 Host: localhost:8080
-Authorization: hello
+Authorization: Bearer JWT Token
 
 ### Update data user
 PATCH /users/2 HTTP/1.1
 Host: localhost:8080
-Authorization: hello
+Authorization: Bearer JWT Token
 Content-Type: application/x-www-form-urlencoded
 
 fullname=dimas1&email=dimas4@mail.com
+
+PATCH /users/2/picture HTTP/1.1
+Host: localhost:8080
+Authorization: Bearer JWT Token
+Content-Type: multipart/form-data; boundary=webf
+
+--webf
+Content-Disposition: form-data; name="picture"; filename="images.jpeg"
+Content-Type: image/jpg
+
+< /home/dimastadeo/Downloads/test/images.jpeg
+--webf--
 
 ### Login
 POST /auth/login HTTP/1.1
@@ -164,6 +192,8 @@ erDiagram
         VARCHAR password
         TIMESTAMP created_at
         TIMESTAMP updated_at
+        VARCHAR picture
+        BIGINT created_at FK
     }
 ```
 
@@ -191,10 +221,11 @@ erDiagram
 │   └── users.html
 │
 ├── migrations/
+├── docs/
+├── uploads/
 ├── .env
 ├── go.mod
 ├── go.sum
-├── main.go
 ├── main.go
 ├── Makefile
 └── README.md
@@ -231,6 +262,8 @@ DATABASE_URL=postgres://username:password@host:port/database?sslmode=disable
 PORT=Port Backend
 PORT_FRONTEND= Port Frontend
 
+JWT_KEY=key jwt
+
 PGUSER=user postgres
 PGPASSWORD=password postgres
 PGHOST=host postgres
@@ -239,6 +272,24 @@ PGDATABASE=nama database
 ```
 
 ---
+
+## Migration
+
+```bash
+make migrate-up
+```
+
+```bash
+make migrate-down
+```
+
+```bash
+make migrate-create name=create_users
+```
+
+```bash
+make migrate-force version=1
+```
 
 ## Jalankan Backend
 
@@ -268,17 +319,25 @@ Dashboard User
  │
  ├── Get All
  ├── Tambah User
- ├── Edit User
+ ├── Edit User & upload profile image
  ├── Delete User
  └── Logout
 ```
 
 ---
 
+## Security
+
+- JWT Authentication
+- Protected Routes
+- Password Hashing (bcrypt)
+- Image Extension Validation
+- File Size Validation
+
 # Catatan
 
 - Password disimpan menggunakan **bcrypt hash**.
-- Endpoint `/users` dilindungi menggunakan middleware Authorization.
+- Endpoint `/users` dilindungi menggunakan middleware Authorization dengan JWT Token, setiap token hanya aktif 15 menit.
 - Frontend menggunakan **Fetch API** dengan `application/x-www-form-urlencoded`.
 - Token Authorization disimpan di **localStorage** setelah login berhasil.
 
