@@ -3,6 +3,8 @@ package repo
 import (
 	"context"
 	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/dimastadeoo/backend1/internal/models"
 	"github.com/jackc/pgx/v5"
@@ -49,12 +51,40 @@ func (u *UserRepo) Create(create *models.RegisterUsers) (models.Users, error) {
 	return user, nil
 }
 
-func (u *UserRepo) GetAll() ([]models.Users, error) {
+func (u *UserRepo) GetAll(search map[string]string) ([]models.Users, error) {
 	query := `
 			SELECT id, fullname, email, picture, created_at, updated_at, created_by
 			FROM users
 	`
-	data, err := u.data.Query(context.Background(), query)
+	var (
+		args []any
+		where []string
+	)
+
+	if fullname, ok := search["fullname"]; ok{
+		args = append(args, "%"+fullname+"%")
+		where = append(
+			where,
+			fmt.Sprintf("fullname ILIKE $%d", len(args)),
+		)
+	}
+
+	if email, ok := search["email"]; ok{
+		args = append(args, "%"+email+"%")
+		where = append(
+			where,
+			fmt.Sprintf("email ILIKE $%d", len(args)),
+		)
+	}
+
+	if len(where) > 0 {
+		query += " WHERE "
+		query += strings.Join(where, " AND ")
+	}
+
+	query += " ORDER BY id"
+
+	data, err := u.data.Query(context.Background(), query, args...)
 	if err != nil {
 		return nil, err
 	}
