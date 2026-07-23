@@ -129,6 +129,14 @@ paths:
             items:
               $ref: '#/definitions/models.Users'
             type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/lib.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/lib.Response'
       security:
       - Bearer: []
       summary: List All Users
