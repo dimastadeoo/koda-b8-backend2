@@ -99,19 +99,28 @@ func (h *UserHandler) RegisterAdmin(ctx *gin.Context){
 // @Security     Bearer
 // @Router       /users [get]
 func (h *UserHandler) GetAll(ctx *gin.Context) {
+	search := map[string]string{}
 
-	users, err := h.svc.GetAll()
+	if fullname := ctx.Query("search[fullname]"); fullname != ""{
+		search["fullname"] = fullname
+	}
+
+	if email := ctx.Query("search[email]"); email != ""{
+		search["email"] = email
+	}
+
+	users, err := h.svc.GetAll(search)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, lib.Response{
 			Success: false,
 			Message: err.Error(),
-			Results: users,
 		})
 	}
 
 	ctx.JSON(http.StatusOK, lib.Response{
 		Success: true,
+		Message: "Success Get Data",
 		Results: users,
 	})
 }
