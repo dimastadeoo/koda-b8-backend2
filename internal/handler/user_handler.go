@@ -98,6 +98,8 @@ func (h *UserHandler) RegisterAdmin(ctx *gin.Context){
 // @Param		 search[email] 	   query string false "Search by email"
 // @Accept       x-www-form-urlencoded
 // @Success      200  {array}   models.Users
+// @Failure		 500  {object}  lib.Response
+// @Failure		 400  {object}  lib.Response
 // @Security     Bearer
 // @Router       /users [get]
 func (h *UserHandler) GetAll(ctx *gin.Context) {
@@ -123,6 +125,14 @@ func (h *UserHandler) GetAll(ctx *gin.Context) {
 			Success: false,
 			Message: err.Error(),
 		})
+		return
+	}
+	if len(users) == 0 {
+		ctx.JSON(http.StatusNotFound, lib.Response{
+			Success: false,
+			Message: "Data Not Found",
+		})
+		return
 	}
 
 	ctx.JSON(http.StatusOK, lib.Response{
