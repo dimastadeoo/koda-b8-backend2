@@ -137,6 +137,20 @@
                     "users"
                 ],
                 "summary": "List All Users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search by fullname",
+                        "name": "search[fullname]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by email",
+                        "name": "search[email]",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",

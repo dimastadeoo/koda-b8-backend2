@@ -111,6 +111,15 @@ paths:
       consumes:
       - application/x-www-form-urlencoded
       description: requires a valid JWT token to fetch metadata
+      parameters:
+      - description: Search by fullname
+        in: query
+        name: search[fullname]
+        type: string
+      - description: Search by email
+        in: query
+        name: search[email]
+        type: string
       produces:
       - application/json
       responses:
