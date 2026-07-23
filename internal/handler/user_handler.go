@@ -94,6 +94,8 @@ func (h *UserHandler) RegisterAdmin(ctx *gin.Context){
 // @Description  requires a valid JWT token to fetch metadata
 // @Tags         users
 // @Produce      json
+// @Param		 search[fullname]  query string false "Search by fullname"
+// @Param		 search[email] 	   query string false "Search by email"
 // @Accept       x-www-form-urlencoded
 // @Success      200  {array}   models.Users
 // @Security     Bearer
