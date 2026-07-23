@@ -51,17 +51,18 @@ func (u *UserRepo) Create(create *models.RegisterUsers) (models.Users, error) {
 	return user, nil
 }
 
-func (u *UserRepo) GetAll(search map[string]string, page int, limit int) ([]models.Users, error) {
+func (u *UserRepo) GetAll(search map[string]string, page int, limit int, sorts []models.Sort) (
+	[]models.Users, error) {
 	query := `
 			SELECT id, fullname, email, picture, created_at, updated_at, created_by
 			FROM users
 	`
 	var (
-		args []any
+		args  []any
 		where []string
 	)
 
-	if fullname, ok := search["fullname"]; ok{
+	if fullname, ok := search["fullname"]; ok {
 		args = append(args, "%"+fullname+"%")
 		where = append(
 			where,
@@ -69,7 +70,7 @@ func (u *UserRepo) GetAll(search map[string]string, page int, limit int) ([]mode
 		)
 	}
 
-	if email, ok := search["email"]; ok{
+	if email, ok := search["email"]; ok {
 		args = append(args, "%"+email+"%")
 		where = append(
 			where,
@@ -82,7 +83,17 @@ func (u *UserRepo) GetAll(search map[string]string, page int, limit int) ([]mode
 		query += strings.Join(where, " AND ")
 	}
 
-	query += " ORDER BY id"
+	var orderBy []string
+	for _, sort := range sorts {
+
+		orderBy = append(
+			orderBy,
+			fmt.Sprintf("%s %s", sort.Column, sort.Order),
+		)
+	}
+
+	query += " ORDER BY "
+	query += strings.Join(orderBy, ", ")
 
 	//
 	// Tambahkan pagination HANYA jika page/limit diisi
@@ -96,7 +107,7 @@ func (u *UserRepo) GetAll(search map[string]string, page int, limit int) ([]mode
 		if limit <= 0 {
 			limit = 5
 		}
-		
+
 		offset := (page - 1) * limit
 
 		query += fmt.Sprintf(
