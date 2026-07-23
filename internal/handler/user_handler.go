@@ -30,11 +30,11 @@ func NewHandlerUser(svc *services.UserService) *UserHandler {
 // @Tags         auth
 // @Accept       x-www-form-urlencoded
 // @Produce      json
-
+// 
 // @Param        fullname formData string true "User full name"
 // @Param        email    formData string true "User email" Format(email)
 // @Param        password formData string true "User password" Format(password)
-
+// 
 // @Success      201  {object}  lib.Response  "Returns user data or success message"
 // @Failure      400  {object}  lib.Response  "Invalid request payload (e.g., missing fields, invalid email format)"
 // @Failure      409  {object}  lib.Response  "Email already exists"
@@ -78,11 +78,11 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 // @Tags         users
 // @Accept       x-www-form-urlencoded
 // @Produce      json
-
+// 
 // @Param        fullname formData string true "User full name"
 // @Param        email    formData string true "User email" Format(email)
 // @Param        password formData string true "User password" Format(password)
-
+// 
 // @Success      201  {object}  lib.Response
 // @Failure      400  {object}  lib.Response
 // @Failure      401  {object}  lib.Response
@@ -99,12 +99,12 @@ func (h *UserHandler) RegisterAdmin(ctx *gin.Context) {
 // @Tags         users
 // @Produce      json
 // @Accept       x-www-form-urlencoded
-
+// 
 // @Param		 search[fullname]  query string false "Search by fullname"
 // @Param		 search[email] 	   query string false "Search by email"
 // @Param        page             query int    false "Page number (default: 1 if limit is specified)" minimum(1)
 // @Param        limit            query int    false "Number of items per page (default: 10 if page is specified)" minimum(1)
-
+// 
 // @Success      200  {array}   models.Users
 // @Failure		 500  {object}  lib.Response
 // @Failure		 400  {object}  lib.Response
@@ -126,13 +126,28 @@ func (h *UserHandler) GetAll(ctx *gin.Context) {
 
 	page := 0
 	limit := 0
+	var err error
 
 	if pageStr != "" {
-		page, _ = strconv.Atoi(pageStr)
+		page, err = strconv.Atoi(pageStr)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, lib.Response{
+				Success: false,
+				Message: err.Error(),
+			})
+			return
+		}
 	}
 
 	if limitStr != "" {
-		limit, _ = strconv.Atoi(limitStr)
+		limit, err = strconv.Atoi(limitStr)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, lib.Response{
+				Success: false,
+				Message: err.Error(),
+			})
+			return
+		}
 	}
 
 	users, err := h.svc.GetAll(search, page, limit)
@@ -170,10 +185,10 @@ func (h *UserHandler) GetAll(ctx *gin.Context) {
 // @Tags         auth
 // @Accept       x-www-form-urlencoded
 // @Produce      json
-
+// 
 // @Param        email    formData string true "User email" Format(email)
 // @Param        password formData string true "User password" Format(password)
-
+// 
 // @Success      200  {object}  lib.Response  "Returns token and user data"
 // @Failure      400  {object}  lib.Response  "Invalid request payload"
 // @Failure      401  {object}  lib.Response  "Invalid email or password"
@@ -222,9 +237,9 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 // @Tags         users
 // @Accept       x-www-form-urlencoded
 // @Produce      json
-
+// 
 // @Param        id   path      string  true  "User ID"
-
+// 
 // @Success      200  {object}  models.Users "Returns the user data (password excluded)"
 // @Failure      400  {object}  lib.Response  "Invalid ID format"
 // @Failure      401  {object}  lib.Response  "Unauthorized (missing or invalid JWT)"
@@ -266,11 +281,11 @@ func (h *UserHandler) FindById(ctx *gin.Context) {
 // @Tags         users
 // @Accept       x-www-form-urlencoded
 // @Produce      json
-
+// 
 // @Param        id        path      string  true  "User ID"
 // @Param        fullname  formData  string  true  "New full name"
 // @Param        email     formData  string  true  "New email" Format(email)
-
+// 
 // @Success      200       {object}  models.Users  "Returns updated user data"
 // @Failure      400       {object}  lib.Response  "Invalid request payload"
 // @Failure      401       {object}  lib.Response  "Unauthorized"
@@ -325,10 +340,10 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 // @Tags         users
 // @Accept       multipart/form-data
 // @Produce      json
-
+// 
 // @Param        id      path      string  true  "User ID (numeric)"
 // @Param        picture formData  file    true  "Profile picture file (jpg, jpeg, png, webp, max 2MB)"
-
+// 
 // @Success      200     {object}  lib.Response  "Returns success message: 'user <email> success updated picture'"
 // @Failure      400     {object}  lib.Response  "Invalid ID format, invalid file extension, file too large, or other bad request"
 // @Failure      404     {object}  lib.Response  "User not found"
@@ -436,10 +451,10 @@ func (h *UserHandler) UpdatePicture(ctx *gin.Context) {
 // @Tags         users
 // @Accept       x-www-form-urlencoded
 // @Produce      json
-
+// 
 // @Param        id   path      string  true  "User ID (numeric)"
 // @Success      200  {object}  lib.Response  "User Success Deleted"
-
+// 
 // @Failure      400  {object}  lib.Response  "Invalid ID format or service error (e.g., user not found)"
 // @Failure      401  {object}  lib.Response  "Unauthorized (missing or invalid JWT)"
 // @Failure      403  {object}  lib.Response  "Forbidden (not authorized to delete this user)"
