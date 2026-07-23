@@ -51,7 +51,7 @@ func (u *UserRepo) Create(create *models.RegisterUsers) (models.Users, error) {
 	return user, nil
 }
 
-func (u *UserRepo) GetAll(search map[string]string) ([]models.Users, error) {
+func (u *UserRepo) GetAll(search map[string]string, page int, limit int) ([]models.Users, error) {
 	query := `
 			SELECT id, fullname, email, picture, created_at, updated_at, created_by
 			FROM users
@@ -83,6 +83,28 @@ func (u *UserRepo) GetAll(search map[string]string) ([]models.Users, error) {
 	}
 
 	query += " ORDER BY id"
+
+//
+// Tambahkan pagination HANYA jika page/limit diisi
+//
+	if page > 0 || limit > 0 {
+
+		if page <= 0 {
+			page = 1
+		}
+
+		if limit <= 0 {
+			limit = 10
+		}
+		offset := (page - 1) * limit
+
+		query += fmt.Sprintf(
+			" LIMIT $%d OFFSET $%d",
+			len(args)+1,
+			len(args)+2,
+		)
+		args = append(args, limit, offset)
+	}
 
 	data, err := u.data.Query(context.Background(), query, args...)
 	if err != nil {
