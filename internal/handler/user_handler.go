@@ -110,6 +110,11 @@ func (h *UserHandler) GetAll(ctx *gin.Context) {
 	}
 
 	users, err := h.svc.GetAll(search)
+	
+	for _, user := range users {
+		user.CreatedAt = lib.TimeToWIB(user.CreatedAt)
+		user.UpdatedAt = lib.TimeToWIB(user.UpdatedAt)
+	}
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, lib.Response{
