@@ -19,6 +19,35 @@ const docTemplate = `{
     "paths": {
         "/auth/login": {
             "post": {
+                "description": "Authenticates a user using email and password, returns a JWT token.",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User login",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "email",
+                        "description": "User email",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "password",
+                        "description": "User password",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Returns token and user data",
@@ -43,6 +72,42 @@ const docTemplate = `{
         },
         "/auth/register": {
             "post": {
+                "description": "Creates a new user account with fullname, email, and password.",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User full name",
+                        "name": "fullname",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "email",
+                        "description": "User email",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "password",
+                        "description": "User password",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Returns user data or success message",
@@ -70,6 +135,45 @@ const docTemplate = `{
                 "security": [
                     {
                         "Bearer": []
+                    }
+                ],
+                "description": "requires a valid JWT token to fetch metadata",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "List All Users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search by fullname",
+                        "name": "search[fullname]",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by email",
+                        "name": "search[email]",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Page number (default: 1 if limit is specified)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Number of items per page (default: 10 if page is specified)",
+                        "name": "limit",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -100,6 +204,42 @@ const docTemplate = `{
                 "security": [
                     {
                         "Bearer": []
+                    }
+                ],
+                "description": "Admin creates a new user account. Requires authentication.",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Create a new user (require auth login)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User full name",
+                        "name": "fullname",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "email",
+                        "description": "User email",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "password",
+                        "description": "User password",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -135,6 +275,26 @@ const docTemplate = `{
                 "security": [
                     {
                         "Bearer": []
+                    }
+                ],
+                "description": "Retrieves detailed information of a specific user by their unique ID. Requires authentication.",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get user by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -176,7 +336,33 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
+                "description": "Permanently deletes a user from the system. Requires authentication and proper authorization (user owns the account or admin).",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Delete user by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID (numeric)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
+                    "200": {
+                        "description": "User Success Deleted",
+                        "schema": {
+                            "$ref": "#/definitions/lib.Response"
+                        }
+                    },
                     "400": {
                         "description": "Invalid ID format or service error (e.g., user not found)",
                         "schema": {
@@ -213,6 +399,41 @@ const docTemplate = `{
                 "security": [
                     {
                         "Bearer": []
+                    }
+                ],
+                "description": "Updates the fullname and email of an existing user. Requires authentication (JWT) and the user must own the account or have admin privileges.",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update user's fullname and email",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "New full name",
+                        "name": "fullname",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "email",
+                        "description": "New email",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -260,6 +481,33 @@ const docTemplate = `{
                 "security": [
                     {
                         "Bearer": []
+                    }
+                ],
+                "description": "Uploads a new profile picture for the user. The file must be in JPG, JPEG, PNG, or WEBP format with a maximum size of 2 MB. The old picture file will be automatically removed.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update user profile picture",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID (numeric)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Profile picture file (jpg, jpeg, png, webp, max 2MB)",
+                        "name": "picture",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
