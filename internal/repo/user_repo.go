@@ -84,9 +84,9 @@ func (u *UserRepo) GetAll(search map[string]string, page int, limit int) ([]mode
 
 	query += " ORDER BY id"
 
-//
-// Tambahkan pagination HANYA jika page/limit diisi
-//
+	//
+	// Tambahkan pagination HANYA jika page/limit diisi
+	//
 	if page > 0 || limit > 0 {
 
 		if page <= 0 {
@@ -94,8 +94,9 @@ func (u *UserRepo) GetAll(search map[string]string, page int, limit int) ([]mode
 		}
 
 		if limit <= 0 {
-			limit = 10
+			limit = 5
 		}
+		
 		offset := (page - 1) * limit
 
 		query += fmt.Sprintf(
