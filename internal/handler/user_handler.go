@@ -215,6 +215,8 @@ func (h *UserHandler) FindById(ctx *gin.Context) {
 		return
 	}
 	user, err := h.svc.FindById(id)
+	user.CreatedAt = lib.TimeToWIB(user.CreatedAt)
+	user.UpdatedAt = lib.TimeToWIB(user.UpdatedAt)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, lib.Response{
