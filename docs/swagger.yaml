@@ -120,16 +120,37 @@ paths:
         in: query
         name: search[email]
         type: string
-      - description: 'Page number (default: 1 if limit is specified)'
+      - description: 'Page number. Default: 1 if limit is specified.'
         in: query
         minimum: 1
         name: page
         type: integer
-      - description: 'Number of items per page (default: 10 if page is specified)'
+      - description: 'Number of items per page. Default: 10 if page is specified.'
         in: query
         minimum: 1
         name: limit
         type: integer
+      - description: Sort by ID
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort[id]
+        type: string
+      - description: Sort by Fullname
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort[fullname]
+        type: string
+      - description: Sort by Email
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort[email]
+        type: string
       produces:
       - application/json
       responses:

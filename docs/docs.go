@@ -164,15 +164,45 @@ const docTemplate = `{
                     {
                         "minimum": 1,
                         "type": "integer",
-                        "description": "Page number (default: 1 if limit is specified)",
+                        "description": "Page number. Default: 1 if limit is specified.",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "minimum": 1,
                         "type": "integer",
-                        "description": "Number of items per page (default: 10 if page is specified)",
+                        "description": "Number of items per page. Default: 10 if page is specified.",
                         "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "Sort by ID",
+                        "name": "sort[id]",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "Sort by Fullname",
+                        "name": "sort[fullname]",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "Sort by Email",
+                        "name": "sort[email]",
                         "in": "query"
                     }
                 ],
