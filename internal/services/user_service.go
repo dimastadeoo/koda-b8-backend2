@@ -28,8 +28,9 @@ func (r *UserService) Register(user *models.RegisterUsers) (models.Users, error)
 	return r.repo.Create(user)
 }
 
-func (s *UserService) GetAll(search map[string]string, page int, limit int) ([]models.Users, error) {
-	return s.repo.GetAll(search, page, limit)
+func (s *UserService) GetAll(search map[string]string, page int, limit int, sorts []models.Sort) (
+	[]models.Users, error) {
+	return s.repo.GetAll(search, page, limit, sorts)
 }
 
 func (s *UserService) Login(req *models.LoginUser) (*models.Users, error) {
