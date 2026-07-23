@@ -33,3 +33,8 @@ type LoginUser struct {
 	Email    string `json:"email" form:"email" binding:"required,email"`
 	Password string `json:"-" form:"password" binding:"required"`
 }
+
+type Sort struct {
+	Column string
+	Order  string
+}
