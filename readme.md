@@ -193,7 +193,7 @@ erDiagram
         TIMESTAMP created_at
         TIMESTAMP updated_at
         VARCHAR picture
-        BIGINT created_at FK
+        BIGINT created_by FK
     }
 ```
 
